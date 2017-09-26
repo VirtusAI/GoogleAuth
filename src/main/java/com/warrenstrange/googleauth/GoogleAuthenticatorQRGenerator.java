@@ -30,10 +30,10 @@
 
 package com.warrenstrange.googleauth;
 
-import org.apache.http.client.utils.URIBuilder;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This class provides helper methods to create a QR code containing the
@@ -180,6 +180,46 @@ public final class GoogleAuthenticatorQRGenerator {
         
         return uri.toString();
 
+    }
+    
+    private static class URIBuilder {
+		private String scheme;
+		private String host;
+		private String path;
+		private final Map<String,String> parameters = new LinkedHashMap<>();
+
+		URIBuilder setScheme(String scheme) {
+			this.scheme = scheme;
+			return this;
+		}
+
+		URIBuilder setHost(String host) {
+			this.host = host;
+			return this;
+		}
+
+		URIBuilder setPath(String path) {
+			this.path = path;
+			return this;
+		}
+
+		URIBuilder setParameter(String name, String value) {
+			parameters.put(name, value);
+			return this;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder sb = new StringBuilder().append(scheme).append("://").append(host).append(path);
+			char paramDelim = '?';
+			
+			for (Map.Entry<String,String> param : parameters.entrySet()) {
+				sb.append(paramDelim).append(param.getKey()).append('=').append(param.getValue());
+				paramDelim = '&';
+			}
+			
+			return sb.toString();
+		}
     }
     
 }
